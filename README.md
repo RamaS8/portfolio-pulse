@@ -1,4 +1,4 @@
-# Northstar Portfolio Risk Intelligence
+# Portfolio Pulse Risk Intelligence
 
 A synthetic wealth-management risk dashboard with a FastAPI/Pandas backend and a React, Vite, Tailwind, and Recharts frontend.
 
