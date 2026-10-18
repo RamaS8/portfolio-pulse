@@ -114,7 +114,7 @@ async function readError(response: Response) {
 
 function App() {
   const [data, setData] = useState<DashboardData | null>(null);
-  const [error, setError] = useState("");
+  const [error, setError] = useState<string | null>(null);
   const [search, setSearch] = useState("");
   const [tierFilter, setTierFilter] = useState("All tiers");
   const [mandateFilter, setMandateFilter] = useState("All mandates");
@@ -128,17 +128,30 @@ function App() {
 
   useEffect(() => {
     let active = true;
-    fetch(`${API_URL}/api/dashboard`)
-      .then(async (response) => {
-        if (!response.ok) throw new Error(await readError(response));
-        return response.json() as Promise<DashboardData>;
-      })
-      .then((result) => {
-        if (active) setData(result);
-      })
-      .catch((reason: unknown) => {
-        if (active) setError(reason instanceof Error ? reason.message : "Could not load portfolio data.");
-      });
+    const loadDashboard = async () => {
+      let lastError: unknown;
+      for (let attempt = 0; attempt < 6 && active; attempt += 1) {
+        try {
+          const response = await fetch(`${API_URL}/api/dashboard`);
+          if (!response.ok) throw new Error(await readError(response));
+          const result = await (response.json() as Promise<DashboardData>);
+          if (active) {
+            setData(result);
+            setError(null);
+          }
+          return;
+        } catch (reason: unknown) {
+          lastError = reason;
+          if (attempt < 5 && active) {
+            await new Promise((resolve) => window.setTimeout(resolve, 5000));
+          }
+        }
+      }
+      if (active) {
+        setError(lastError instanceof Error ? lastError.message : "Could not load portfolio data.");
+      }
+    };
+    void loadDashboard();
     return () => {
       active = false;
     };
@@ -228,7 +241,7 @@ function App() {
           <AlertCircle size={25} />
           <h1>Couldn’t connect to the risk service</h1>
           <p>{error}</p>
-          <span>Start the FastAPI server, then refresh this page.</span>
+          <span>The analytics service may take a few moments to wake up. Please try again shortly.</span>
           <button className="button button-primary" onClick={() => window.location.reload()}>Try again</button>
         </div>
       </div>
