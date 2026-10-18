@@ -59,5 +59,14 @@ This is an illustrative prototype, not investment advice or a production risk mo
 python -m pytest backend\test_main.py
 npm run build
 ```
-<img width="1856" height="1011" alt="image" src="https://github.com/user-attachments/assets/85ed97eb-55a1-4d65-91b0-8935ba19fecb" />
+<p align="center">
+  <img 
+    src="https://github.com/user-attachments/assets/85ed97eb-55a1-4d65-91b0-8935ba19fecb"
+    width="68%"
+  />
+  <img 
+    src="https://github.com/user-attachments/assets/d40eaa6b-aac6-4753-83c8-8a6690cad68f"
+    width="27%"
+  />
+</p>
 
